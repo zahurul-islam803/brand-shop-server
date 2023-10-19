@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -39,17 +39,18 @@ async function run() {
       res.send(result);
     })
 
-    // get method endpoint
-    app.get('/products/:brand', async(req, res)=>{
-      const filter = {brand: "Spotify"}
-      const data = req.body;
-      const result = await productCollection.find(filter, data).toArray();
-      res.send(result);
-    })
 
-    // get method endpoint
+    // get all method endpoint
     app.get('/products', async(req, res)=>{
       const result = await productCollection.find().toArray();
+      res.send(result);
+    })
+    // get single data method endpoint
+    app.get('/productDetails/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)}; 
+      const data = req.body;
+      const result = await productCollection.findOne(query, data).toArray();
       res.send(result);
     })
 
