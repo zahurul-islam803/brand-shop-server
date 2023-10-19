@@ -31,11 +31,19 @@ async function run() {
     // Send a ping to confirm a successful connection
 
     const productCollection = client.db("productDB").collection("products");
+    const cartCollection = client.db("productDB").collection("carts");
 
     // post method endpoint
     app.post('/products', async(req, res) =>{
       const newProduct = req.body;
       const result = await productCollection.insertOne(newProduct);
+      res.send(result);
+    })
+
+    // post method add to cart endpoint
+    app.post('/cart', async(req, res) =>{
+      const cartProduct = req.body;
+      const result = await cartCollection.insertOne(cartProduct);
       res.send(result);
     })
 
