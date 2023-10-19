@@ -39,6 +39,19 @@ async function run() {
       res.send(result);
     })
 
+    // get method endpoint
+    app.get('/products/:brand', async(req, res)=>{
+      const filter = {brand: "Spotify"}
+      const data = req.body;
+      const result = await productCollection.find(filter, data).toArray();
+      res.send(result);
+    })
+
+    // get method endpoint
+    app.get('/products', async(req, res)=>{
+      const result = await productCollection.find().toArray();
+      res.send(result);
+    })
 
 
     await client.db("admin").command({ ping: 1 });
