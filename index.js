@@ -34,34 +34,64 @@ async function run() {
     const cartCollection = client.db("productDB").collection("carts");
 
     // post method endpoint
-    app.post('/products', async(req, res) =>{
+    app.post("/products", async (req, res) => {
       const newProduct = req.body;
       const result = await productCollection.insertOne(newProduct);
       res.send(result);
-    })
+    });
 
     // post method add to cart endpoint
-    app.post('/cart', async(req, res) =>{
+    app.post("/cart", async (req, res) => {
       const cartProduct = req.body;
       const result = await cartCollection.insertOne(cartProduct);
       res.send(result);
-    })
-
+    });
 
     // get all method endpoint
-    app.get('/products', async(req, res)=>{
+    app.get("/products", async (req, res) => {
       const result = await productCollection.find().toArray();
       res.send(result);
-    })
+    });
     // get single data method endpoint
-    app.get('/productDetails/:id', async(req, res)=>{
+    app.get("/productDetails/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)}; 
+      const query = { _id: new ObjectId(id) };
       const data = req.body;
       const result = await productCollection.findOne(query, data).toArray();
       res.send(result);
-    })
+    });
 
+    // update method endpoint
+    app.put(`/products/:id`, async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateProduct = req.body;
+      const options = { upsert: true };
+      const product = {
+        $set: {
+          image: updateProduct.image,
+          name: updateProduct.name,
+          brand: updateProduct.brand,
+          type: updateProduct.type,
+          price: updateProduct.price,
+          rating: updateProduct.rating,
+        },
+      };
+      const result = await productCollection.updateOne(
+        filter,
+        product,
+        options
+      );
+      res.send(result);
+    });
+
+    // update find method endpoint
+    app.get("/products/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await productCollection.findOne(query);
+      res.send(result);
+    });
 
     await client.db("admin").command({ ping: 1 });
     console.log(
